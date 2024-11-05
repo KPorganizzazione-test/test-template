@@ -17,7 +17,7 @@ spec:
         - name
       properties:
         name:
-          title: Name
+          title: Name # placeholder
           type: string
           description: Unique name of the component
           ui:autofocus: true
@@ -50,6 +50,7 @@ spec:
           type: string
           ui:field: Secret
         password:
+          title: Password
           type: string
           ui:field: Secret
     - title: Choose a location
@@ -63,17 +64,7 @@ spec:
           ui:options:
             allowedHosts:
               - github.com
-    - title: Choose a location 2
-      required:
-        - repoUrl2
-      properties:
-        repoUrl2:
-          title: Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - github.com 
+              - gitlab.com
             # allowedOwners:
             #   - backstage
             #   - someGithubUser
