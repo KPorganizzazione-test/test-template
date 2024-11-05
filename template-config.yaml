@@ -46,6 +46,7 @@ spec:
         - password
       properties:
         username:
+          title: Username
           type: string
           ui:field: Secret
         password:
