@@ -39,11 +39,11 @@ spec:
           minLength: 10
           ui:options:
             inputType: tel
-        title: Authenticaion
-          description: Provide authentication for the resource
-          required:
-            - username
-            - password
+    - title: Authentication
+      description: Provide authentication for the resource
+      required:
+        - username
+        - password
     - title: Choose a location
       required:
         - repoUrl
@@ -58,6 +58,13 @@ spec:
 
   # here's the steps that are executed in series in the scaffolder backend
   steps:
+    - id: setupAuthentication
+      action: auth:create
+      input:
+        # make sure to use ${{ secrets.parameterName }} to reference these values
+        username: ${{ secrets.username }}
+        password: ${{ secrets.password }}
+        
     - id: fetch-base
       name: Fetch Base
       action: fetch:template
