@@ -7,7 +7,7 @@ metadata:
   title: KP Test Template
   description: Template di test
 spec:
-  owner: keypartner/falcone
+  owner: guests/Falcone-KP
   type: service
 
   # these are the steps which are rendered in the frontend with the form input
@@ -23,14 +23,27 @@ spec:
           ui:autofocus: true
           ui:options:
             rows: 5
+          ui:autocomplete: given-name
         owner:
           title: Owner
           type: string
           description: Owner of the component
           ui:field: OwnerPicker
+          ui:emptyValue: ''
           ui:options:
             catalogFilter:
               kind: Group
+        telephone:
+          type: string
+          title: Telephone
+          minLength: 10
+          ui:options:
+            inputType: tel
+        title: Authenticaion
+          description: Provide authentication for the resource
+          required:
+            - username
+            - password
     - title: Choose a location
       required:
         - repoUrl
