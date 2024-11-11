@@ -1,127 +1,53 @@
-# Notice the v1beta3 version
-apiVersion: scaffolder.backstage.io/v1beta3
-kind: Template
-# some metadata about the template itself
-metadata:
-  name: kp-test-template
-  title: KP Test Template
-  description: Template di test
-spec:
-  owner: guests/Falcone-KP
-  type: service
 
-  # these are the steps which are rendered in the frontend with the form input
+Ecco il template con un commento per ogni sezione, così puoi capire meglio cosa fa ciascuna parte:
+
+yaml
+Copia codice
+# Specifica la versione dell'API di Backstage e il tipo di risorsa.
+apiVersion: backstage.io/v1alpha1
+kind: Template
+
+# Metadati del template, come il nome e la descrizione. Questi saranno visibili nell'interfaccia di Backstage.
+metadata:
+  name: example-template                  # Nome identificativo del template
+  title: Example Project Template         # Titolo del template, visualizzato nell'interfaccia di Backstage
+  description: A simple template for creating a new project in Backstage.  # Descrizione breve del template
+
+# Specifica le configurazioni principali del template
+spec:
+  owner: team@example.com                 # Email del proprietario del template, utile per identificare chi gestisce questo template
+  type: service                           # Tipo di risorsa (es. "service", "website", "library", ecc.), che aiuta a classificare il template
+
+  # Definisce i passaggi (steps) che verranno eseguiti quando si utilizza questo template
+  steps:
+    - id: fetch                           # ID univoco del passaggio
+      name: Fetch Content                 # Nome leggibile del passaggio
+      action: fetch:template              # Tipo di azione, in questo caso "fetch:template" che scarica o importa un template esistente
+      input:
+        url: ./template-repo              # URL o percorso locale al contenuto del template, da cui verranno importati i file iniziali
+
+    - id: prepare                         # ID univoco del secondo passaggio
+      name: Prepare the Project           # Nome leggibile del passaggio
+      action: prepare:configure           # Tipo di azione, "prepare:configure" che configura il progetto con i parametri inseriti
+      input:
+        projectName: ${{ values.name }}       # Utilizza il valore "name" fornito dall'utente per impostare il nome del progetto
+        projectDescription: ${{ values.description }}   # Utilizza il valore "description" fornito dall'utente per impostare la descrizione del progetto
+
+  # Parametri che l'utente deve fornire quando utilizza questo template
   parameters:
-    - title: Fill in some steps
-      required:
-        - name
+    - title: Project Information            # Titolo del gruppo di parametri, visibile all'utente
       properties:
         name:
-          title: Name # placeholder
-          type: string
-          description: Unique name of the component
-          ui:autofocus: true
-          ui:options:
-            rows: 5
-          ui:autocomplete: given-name
-        owner:
-          title: Owner
-          type: string
-          description: Owner of the component
-          ui:field: OwnerPicker
-          ui:emptyValue: ''
-          ui:options:
-            catalogFilter:
-              kind: Group
-        telephone:
-          type: string
-          title: Telephone
-          minLength: 10
-          ui:options:
-            inputType: tel
-    - title: Authentication
-      description: Provide authentication for the resource
-      required:
-        - username
-        - password
-      properties:
-        username:
-          title: Username
-          type: string
-          ui:field: Secret
-        password:
-          title: Password
-          type: string
-          ui:field: Secret
-    - title: Choose a location
-      required:
-        - repoUrl
-      properties:
-        repoUrl:
-          title: Repository Location
-          type: string
-          ui:field: RepoUrlPicker
-          ui:options:
-            allowedHosts:
-              - github.com
-              - gitlab.com
-            # allowedOwners:
-            #   - backstage
-            #   - someGithubUser
-            # allowedRepos:
-            #   - backstage
-            # The allowedHosts part should be set to where you wish to enable this template to publish to. And it can be any host that is listed in your integrations config in app-config.yaml
+          title: Project Name               # Nome del parametro
+          type: string                      # Tipo di dato, in questo caso una stringa
+          description: The name of the new project.   # Descrizione del parametro, visibile all'utente
+        description:
+          title: Project Description        # Nome del secondo parametro
+          type: string                      # Tipo di dato, in questo caso una stringa
+          description: A brief description of the project.  # Descrizione del secondo parametro
 
-  # here's the steps that are executed in series in the scaffolder backend
-  steps:
-    - id: setupAuthentication
-      action: auth:create
-      input:
-        # make sure to use ${{ secrets.parameterName }} to reference these values
-        username: ${{ secrets.username }}
-        password: ${{ secrets.password }}
-
-    - id: fetch-base
-      name: Fetch Base
-      action: fetch:template
-      input:
-        url: ./template
-        values:
-          name: ${{ parameters.name }}
-          owner: ${{ parameters.owner }}
-
-    - id: fetch-docs
-      name: Fetch Docs
-      action: fetch:plain
-      input:
-        targetPath: ./community
-        url: https://github.com/backstage/community/tree/main/backstage-community-sessions
-
-    - id: publish
-      name: Publish
-      action: publish:github
-      input:
-        allowedHosts: ['github.com']
-        description: This is ${{ parameters.name }}
-        repoUrl: ${{ parameters.repoUrl }}
-        defaultBranch: main
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps['publish'].output.repoContentsUrl }}
-        catalogInfoPath: '/catalog-info.yaml'
-
-  # some outputs which are saved along with the job for use in the frontend
+  # Output che sarà visibile dopo l'esecuzione del template
   output:
     links:
-      - title: Repository
-        url: ${{ steps['publish'].output.remoteUrl }}
-      - title: Open in catalog
-        icon: catalog
-        entityRef: ${{ steps['register'].output.entityRef }}
-    text:
-      - title: More information
-        content: |
-          **Entity URL:** `${{ steps['publish'].output.remoteUrl }}`
+      - title: GitHub Repository            # Nome del link di output, ad esempio il link al repository GitHub creato
+        url: ${{ steps.publish.output.remoteUrl }}  # URL dinamico basato sull'output del passaggio "publish"
