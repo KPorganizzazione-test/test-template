@@ -1,53 +1,39 @@
-
-Ecco il template con un commento per ogni sezione, così puoi capire meglio cosa fa ciascuna parte:
-
-yaml
-Copia codice
-# Specifica la versione dell'API di Backstage e il tipo di risorsa.
 apiVersion: backstage.io/v1alpha1
 kind: Template
-
-# Metadati del template, come il nome e la descrizione. Questi saranno visibili nell'interfaccia di Backstage.
 metadata:
-  name: example-template                  # Nome identificativo del template
-  title: Example Project Template         # Titolo del template, visualizzato nell'interfaccia di Backstage
-  description: A simple template for creating a new project in Backstage.  # Descrizione breve del template
-
-# Specifica le configurazioni principali del template
+  name: example-template
+  title: Example Project Template
+  description: A simple template for creating a new project in Backstage.
 spec:
-  owner: team@example.com                 # Email del proprietario del template, utile per identificare chi gestisce questo template
-  type: service                           # Tipo di risorsa (es. "service", "website", "library", ecc.), che aiuta a classificare il template
-
-  # Definisce i passaggi (steps) che verranno eseguiti quando si utilizza questo template
+  owner: team@example.com
+  type: service
   steps:
-    - id: fetch                           # ID univoco del passaggio
-      name: Fetch Content                 # Nome leggibile del passaggio
-      action: fetch:template              # Tipo di azione, in questo caso "fetch:template" che scarica o importa un template esistente
+    - id: fetch
+      name: Fetch Content
+      action: fetch:template
       input:
-        url: ./template-repo              # URL o percorso locale al contenuto del template, da cui verranno importati i file iniziali
+        url: ./template-repo
 
-    - id: prepare                         # ID univoco del secondo passaggio
-      name: Prepare the Project           # Nome leggibile del passaggio
-      action: prepare:configure           # Tipo di azione, "prepare:configure" che configura il progetto con i parametri inseriti
+    - id: prepare
+      name: Prepare the Project
+      action: prepare:configure
       input:
-        projectName: ${{ values.name }}       # Utilizza il valore "name" fornito dall'utente per impostare il nome del progetto
-        projectDescription: ${{ values.description }}   # Utilizza il valore "description" fornito dall'utente per impostare la descrizione del progetto
+        projectName: ${{ values.name }}
+        projectDescription: ${{ values.description }}
 
-  # Parametri che l'utente deve fornire quando utilizza questo template
   parameters:
-    - title: Project Information            # Titolo del gruppo di parametri, visibile all'utente
+    - title: Project Information
       properties:
         name:
-          title: Project Name               # Nome del parametro
-          type: string                      # Tipo di dato, in questo caso una stringa
-          description: The name of the new project.   # Descrizione del parametro, visibile all'utente
+          title: Project Name
+          type: string
+          description: The name of the new project.
         description:
-          title: Project Description        # Nome del secondo parametro
-          type: string                      # Tipo di dato, in questo caso una stringa
-          description: A brief description of the project.  # Descrizione del secondo parametro
+          title: Project Description
+          type: string
+          description: A brief description of the project.
 
-  # Output che sarà visibile dopo l'esecuzione del template
   output:
     links:
-      - title: GitHub Repository            # Nome del link di output, ad esempio il link al repository GitHub creato
-        url: ${{ steps.publish.output.remoteUrl }}  # URL dinamico basato sull'output del passaggio "publish"
+      - title: GitHub Repository
+        url: ${{ steps.publish.output.remoteUrl }}
